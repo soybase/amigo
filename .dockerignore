@@ -1,2 +1,4 @@
+compose.yml
+docker/Dockerfile*
 provision
 .git
