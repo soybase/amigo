@@ -10,11 +10,13 @@ For local development:
 
     127.0.0.1 localhost golr
 
-3. Point your browser to http://ocalhost:9999
+3. Point your browser to http://localhost:9999
 
 For production deployment:
 
-1. Update the public GOLR URLs in conf/amigo.yaml:
+1. Check out soybase.org/amigo branch
+
+2. Update the public GOLR URLs in conf/amigo.yaml (if necessary):
 
     AMIGO_PUBLIC_GOLR_BULK_URL:
     ...
@@ -23,11 +25,9 @@ For production deployment:
     ...
     value: http://www.soybase.org/solr/
 
-2. Update host ports in compose.yml to not conflict with used ports
+4. Update host ports in compose.yml to not conflict with used ports (if necessary)
 
-3. Deploy on production host:
-
-    docker compose -p soybase-amigo up -d --build
+5. Deploy on production host by pushing commit to GitHub
 
 # Overview
 
