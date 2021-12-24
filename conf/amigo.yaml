@@ -30,7 +30,7 @@ AMIGO_DYNAMIC_PATH:
 AMIGO_DYNAMIC_URL:
   comment: The URL that AMIGO_DYNAMIC_PATH maps to.
   type: url
-  value: /
+  value: /amigo
 AMIGO_FOR_GO:
   comment: This flag indicates whether or not your AmiGO instance is for the GO, or a more generic instance. If you are trying to run AmiGO locally, probably "1"; if you are trying to have your own AmiGO with different ontologies, data, etc., probably 0.
   type: boolean
@@ -57,11 +57,11 @@ AMIGO_PUBLIC_GALAXY_URL:
 AMIGO_PUBLIC_GOLR_BULK_URL:
   comment: The public URL of the GOlr bulk download server (including slash); possibly the same as AMIGO_PUBLIC_GOLR_URL.
   type: url
-  value: http://golr:8080/solr/
+  value: https://www.soybase.org/solr/
 AMIGO_PUBLIC_GOLR_URL:
   comment: 'The public URL of the GOlr server (including slash); this is the one called by AmiGO resource, JS, etc.'
   type: url
-  value: http://golr:8080/solr/
+  value: https://www.soybase.org/solr/
 AMIGO_PUBLIC_NOCTUA_URL:
   comment: The public URL of the Noctua system (including slash).
   type: url
