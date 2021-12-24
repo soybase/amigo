@@ -62,8 +62,6 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 ## Grab the AmiGO/GOlr repo and change context.
 RUN mkdir -p /srv
 USER root:www-data
-COPY package*.json .
-RUN npm install
 # RUN git clone https://github.com/geneontology/amigo.git --branch master --single-branch /srv/amigo
 ADD . /srv/amigo
 WORKDIR /srv/amigo
@@ -105,21 +103,17 @@ RUN mkdir -p /tmp/jetty9 \
 ### AmiGO.
 ###
 
-## AmiGO install.
-USER root:www-data
-RUN  cp ./conf/examples/amigo.yaml.localhost_docker_loader ./conf/amigo.yaml \
-  && npx gulp install
-USER root
-
 ## Final Apache setup.
 ## Get AmiGO docker config into place.
 RUN cp ./conf/examples/apache2.18_04.localhost_root.conf /etc/apache2/sites-available/001-inline-amigo.conf \
     && cp /srv/amigo/conf/examples/apache2.ports.conf /etc/apache2/ports.conf \
-    && a2disconf other-vhosts-access-log.conf \
-    && a2dissite 000-default.conf \
     && a2ensite 001-inline-amigo \
-    && sed -i'' 's#ErrorLog .*#ErrorLog /proc/self/fd/2#' /etc/apache2/apache2.conf
-    
+    && cp ./conf/examples/amigo.yaml.localhost_docker_loader ./conf/amigo.yaml
+
+## AmiGO install.
+USER root:www-data
+RUN npm install && ./node_modules/.bin/gulp install
+USER root
 
 ## The root environment seems to do something funny with the perl5
 ## execution path; modify tp make sure everybody can get at it.

@@ -1,0 +1,70 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y --no-install-recommends \
+  apache2 \
+  g++ \
+  kwalify \
+  libcgi-application-dispatch-perl \
+  libcgi-application-perl \
+  libcgi-application-plugin-forward-perl \
+  libcgi-application-plugin-session-perl \
+  libcgi-application-plugin-tt-perl \
+  libclone-perl \
+  libconfig-yaml-perl \
+  libdata-formvalidator-perl \
+  libdata-uuid-perl \
+  libdbd-sqlite3-perl \
+  libfile-slurp-perl \
+  libfile-type-perl \
+  libfreezethaw-perl \
+  libgraph-perl \
+  libgraphviz-perl \
+  libjson-xs-perl \
+  libmath-bigint-perl \
+  libsql-tokenizer-perl \ 
+  libtimedate-perl \
+  liburi-encode-perl \
+  liburi-perl \
+  libwww-mechanize-perl \
+  libxml-libxml-perl \
+  libxml-xpath-perl \
+  libyaml-perl \
+  make \
+  npm \
+  openjdk-8-jre-headless \
+  && rm -rf /var/lib/apt/lists/*
+
+#RUN a2dismod mpm_event mpm_worker \
+#    && a2enmod mpm_prefork \
+#    && a2dismod cgid mpm_event mpm_worker \
+#    && a2enmod alias mpm_prefork cgi rewrite proxy proxy_http proxy_html macro headers xml2enc
+
+USER root:www-data
+WORKDIR /srv/amigo
+COPY package.json .
+RUN npm install
+COPY . /srv/amigo
+# requires conf/amigo.yaml
+RUN  npx gulp install
+USER root
+
+## Final Apache setup.
+## Get AmiGO docker config into place.
+RUN cp ./conf/examples/apache2.18_04.localhost_root.conf /etc/apache2/sites-available/001-inline-amigo.conf \
+  && cp /srv/amigo/conf/examples/apache2.ports.conf /etc/apache2/ports.conf \
+  && a2dismod mpm_event \
+  && a2enmod alias cgi headers macro mpm_prefork rewrite proxy proxy_html proxy_http xml2enc \
+  && a2dissite 000-default.conf \
+  && a2ensite 001-inline-amigo \
+  && sed -i'' 's#ErrorLog .*#ErrorLog /proc/self/fd/2#' /etc/apache2/apache2.conf
+
+## The root environment seems to do something funny with the perl5
+## execution path; modify tp make sure everybody can get at it.
+RUN sed -i s,config.pl,/srv/amigo/perl/bin/config.pl,g /srv/amigo/perl/bin/* \
+    && sed -i s,config.pl,/srv/amigo/perl/bin/config.pl,g /srv/amigo/perl/lib/AmiGO.pm
+
+EXPOSE 9999
+
+ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]

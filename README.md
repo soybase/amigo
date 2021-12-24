@@ -1,3 +1,34 @@
+# docker quick start
+
+For local development:
+
+1. Build / start containers
+
+    docker compose up -d --build
+
+2. Edit /etc/hosts on your workstation, ensuring "golr" resolves to 127.0.0.1:
+
+    127.0.0.1 localhost golr
+
+3. Point your browser to http://ocalhost:9999
+
+For production deployment:
+
+1. Update the public GOLR URLs in conf/amigo.yaml:
+
+    AMIGO_PUBLIC_GOLR_BULK_URL:
+    ...
+    value: http://www.soybase.org/solr/
+    AMIGO_PUBLIC_GOLR_URL:
+    ...
+    value: http://www.soybase.org/solr/
+
+2. Update host ports in compose.yml to not conflict with used ports
+
+3. Deploy on production host:
+
+    docker compose -p soybase-amigo up -d --build
+
 # Overview
 
   This README file will be filled out more in the future. However, for

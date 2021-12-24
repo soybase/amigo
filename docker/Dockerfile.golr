@@ -1,0 +1,14 @@
+FROM ubuntu:20.04
+
+RUN apt update && apt install -y --no-install-recommends \
+  solr-jetty \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY ./golr/solr/conf/schema.xml /etc/solr/conf/
+
+USER jetty
+WORKDIR /usr/share/jetty9
+
+ENTRYPOINT /usr/lib/jvm/default-java/bin/java -Djava.awt.headless=true -Djava.library.path=/usr/lib -Djetty.home=/usr/share/jetty9 -Djetty.logs=/var/log/jetty9 -Djetty.state=/var/lib/jetty9/jetty.state -jar /usr/share/jetty9/start.jar --daemon /etc/jetty9/jetty-started.xml
+
+EXPOSE 8080
