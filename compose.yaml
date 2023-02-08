@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.amigo
     image: amigo
+    restart: always
     healthcheck:
       test: ["CMD", "timeout", "1", "bash", "-c", "cat < /dev/null > /dev/tcp/localhost/9999"]
       start_period: 1s
@@ -14,6 +15,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.golr
+    restart: always
     healthcheck:
       test: ["CMD", "curl", "--head", "--fail", "--silent", "--output", "/dev/null", "http://localhost:8080"]
       start_period: 5s
